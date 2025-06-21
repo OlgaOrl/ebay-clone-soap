@@ -31,11 +31,10 @@ public class WebServiceConfig extends WsConfigurerAdapter {
     @Bean(name = "ebay")
     public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema ebaySchema) {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
-        wsdl11Definition.setPortTypeName("EbayServicePortType");
+        wsdl11Definition.setPortTypeName("EbayServicePort");
         wsdl11Definition.setLocationUri("/ws/ebay");
         wsdl11Definition.setTargetNamespace("http://soap.ebay.com/service");
         wsdl11Definition.setSchema(ebaySchema);
-        wsdl11Definition.setServiceName("EbayService");
         return wsdl11Definition;
     }
 
@@ -55,6 +54,7 @@ public class WebServiceConfig extends WsConfigurerAdapter {
         Properties errorMappings = new Properties();
         errorMappings.setProperty(Exception.class.getName(), SoapFaultDefinition.SERVER.toString());
         errorMappings.setProperty(IllegalArgumentException.class.getName(), SoapFaultDefinition.CLIENT.toString());
+        errorMappings.setProperty("com.ebay.soap.exception.EbayServiceException", SoapFaultDefinition.CLIENT.toString());
         resolver.setExceptionMappings(errorMappings);
         resolver.setOrder(1);
         
