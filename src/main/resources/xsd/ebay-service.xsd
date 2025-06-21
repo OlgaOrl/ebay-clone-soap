@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://soap.ebay.com/types"
+           xmlns:tns="http://soap.ebay.com/types"
+           elementFormDefault="qualified">
+
+    <!-- Common Types -->
+    <xs:simpleType name="ListingStatus">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ACTIVE"/>
+            <xs:enumeration value="SOLD"/>
+            <xs:enumeration value="EXPIRED"/>
+            <xs:enumeration value="CANCELLED"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Condition">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NEW"/>
+            <xs:enumeration value="LIKE_NEW"/>
+            <xs:enumeration value="GOOD"/>
+            <xs:enumeration value="FAIR"/>
+            <xs:enumeration value="POOR"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="OrderStatus">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PENDING_PAYMENT"/>
+            <xs:enumeration value="PAID"/>
+            <xs:enumeration value="SHIPPED"/>
+            <xs:enumeration value="DELIVERED"/>
+            <xs:enumeration value="CANCELLED"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- User Types -->
+    <xs:complexType name="User">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="username" type="xs:string"/>
+            <xs:element name="email" type="xs:string"/>
+            <xs:element name="firstName" type="xs:string"/>
+            <xs:element name="lastName" type="xs:string"/>
+            <xs:element name="rating" type="xs:double" minOccurs="0"/>
+            <xs:element name="totalSales" type="xs:int" minOccurs="0"/>
+            <xs:element name="createdAt" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="RegisterUserRequest">
+        <xs:sequence>
+            <xs:element name="username" type="xs:string"/>
+            <xs:element name="email" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
+            <xs:element name="firstName" type="xs:string"/>
+            <xs:element name="lastName" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LoginRequest">
+        <xs:sequence>
+            <xs:element name="email" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LoginResponse">
+        <xs:sequence>
+            <xs:element name="token" type="xs:string"/>
+            <xs:element name="user" type="tns:User"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Category Types -->
+    <xs:complexType name="Category">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="GetCategoriesResponse">
+        <xs:sequence>
+            <xs:element name="categories" type="tns:Category" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Listing Types -->
+    <xs:complexType name="Listing">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="title" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="startingPrice" type="xs:decimal"/>
+            <xs:element name="currentPrice" type="xs:decimal"/>
+            <xs:element name="buyNowPrice" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="categoryId" type="xs:long"/>
+            <xs:element name="sellerId" type="xs:long"/>
+            <xs:element name="status" type="tns:ListingStatus"/>
+            <xs:element name="condition" type="tns:Condition"/>
+            <xs:element name="endTime" type="xs:dateTime"/>
+            <xs:element name="createdAt" type="xs:dateTime"/>
+            <xs:element name="images" type="xs:string" maxOccurs="unbounded"/>
+            <xs:element name="bidCount" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CreateListingRequest">
+        <xs:sequence>
+            <xs:element name="title" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="startingPrice" type="xs:decimal"/>
+            <xs:element name="buyNowPrice" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="categoryId" type="xs:long"/>
+            <xs:element name="duration" type="xs:int"/>
+            <xs:element name="condition" type="tns:Condition"/>
+            <xs:element name="images" type="xs:string" maxOccurs="unbounded"/>
+            <xs:element name="authToken" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SearchListingsRequest">
+        <xs:sequence>
+            <xs:element name="query" type="xs:string" minOccurs="0"/>
+            <xs:element name="categoryId" type="xs:long" minOccurs="0"/>
+            <xs:element name="minPrice" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="maxPrice" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="page" type="xs:int" minOccurs="0"/>
+            <xs:element name="size" type="xs:int" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SearchListingsResponse">
+        <xs:sequence>
+            <xs:element name="listings" type="tns:Listing" maxOccurs="unbounded"/>
+            <xs:element name="totalElements" type="xs:long"/>
+            <xs:element name="totalPages" type="xs:int"/>
+            <xs:element name="size" type="xs:int"/>
+            <xs:element name="number" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="GetListingRequest">
+        <xs:sequence>
+            <xs:element name="listingId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Bid Types -->
+    <xs:complexType name="Bid">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="amount" type="xs:decimal"/>
+            <xs:element name="bidderId" type="xs:long"/>
+            <xs:element name="bidder" type="xs:string"/>
+            <xs:element name="listingId" type="xs:long"/>
+            <xs:element name="bidTime" type="xs:dateTime"/>
+            <xs:element name="status" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PlaceBidRequest">
+        <xs:sequence>
+            <xs:element name="listingId" type="xs:long"/>
+            <xs:element name="amount" type="xs:decimal"/>
+            <xs:element name="authToken" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="GetBidHistoryRequest">
+        <xs:sequence>
+            <xs:element name="listingId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="GetBidHistoryResponse">
+        <xs:sequence>
+            <xs:element name="bids" type="tns:Bid" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Order Types -->
+    <xs:complexType name="Order">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="listingId" type="xs:long"/>
+            <xs:element name="buyerId" type="xs:long"/>
+            <xs:element name="sellerId" type="xs:long"/>
+            <xs:element name="amount" type="xs:decimal"/>
+            <xs:element name="status" type="tns:OrderStatus"/>
+            <xs:element name="createdAt" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BuyNowRequest">
+        <xs:sequence>
+            <xs:element name="listingId" type="xs:long"/>
+            <xs:element name="authToken" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="GetUserOrdersRequest">
+        <xs:sequence>
+            <xs:element name="userId" type="xs:long"/>
+            <xs:element name="status" type="tns:OrderStatus" minOccurs="0"/>
+            <xs:element name="authToken" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="GetUserOrdersResponse">
+        <xs:sequence>
+            <xs:element name="orders" type="tns:Order" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Error Types -->
+    <xs:complexType name="EbayFault">
+        <xs:sequence>
+            <xs:element name="errorCode" type="xs:string"/>
+            <xs:element name="message" type="xs:string"/>
+            <xs:element name="details" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Operation Elements -->
+    <!-- User Operations -->
+    <xs:element name="registerUserRequest" type="tns:RegisterUserRequest"/>
+    <xs:element name="registerUserResponse" type="tns:User"/>
+
+    <xs:element name="loginRequest" type="tns:LoginRequest"/>
+    <xs:element name="loginResponse" type="tns:LoginResponse"/>
+
+    <xs:element name="getUserRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="userId" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getUserResponse" type="tns:User"/>
+
+    <!-- Category Operations -->
+    <xs:element name="getCategoriesRequest">
+        <xs:complexType/>
+    </xs:element>
+    <xs:element name="getCategoriesResponse" type="tns:GetCategoriesResponse"/>
+
+    <!-- Listing Operations -->
+    <xs:element name="createListingRequest" type="tns:CreateListingRequest"/>
+    <xs:element name="createListingResponse" type="tns:Listing"/>
+
+    <xs:element name="searchListingsRequest" type="tns:SearchListingsRequest"/>
+    <xs:element name="searchListingsResponse" type="tns:SearchListingsResponse"/>
+
+    <xs:element name="getListingRequest" type="tns:GetListingRequest"/>
+    <xs:element name="getListingResponse" type="tns:Listing"/>
+
+    <!-- Bid Operations -->
+    <xs:element name="placeBidRequest" type="tns:PlaceBidRequest"/>
+    <xs:element name="placeBidResponse" type="tns:Bid"/>
+
+    <xs:element name="getBidHistoryRequest" type="tns:GetBidHistoryRequest"/>
+    <xs:element name="getBidHistoryResponse" type="tns:GetBidHistoryResponse"/>
+
+    <!-- Order Operations -->
+    <xs:element name="buyNowRequest" type="tns:BuyNowRequest"/>
+    <xs:element name="buyNowResponse" type="tns:Order"/>
+
+    <xs:element name="getUserOrdersRequest" type="tns:GetUserOrdersRequest"/>
+    <xs:element name="getUserOrdersResponse" type="tns:GetUserOrdersResponse"/>
+
+    <!-- Fault Elements -->
+    <xs:element name="ebayFault" type="tns:EbayFault"/>
+
+</xs:schema>
